@@ -1,12 +1,13 @@
 from .base import Adapter
 from crawlers import MT5DataSource
 
+
 class MT5Adapter(Adapter):
     """
     Adapter for the MT5 crawler.
     """
 
-    def __init__(self, crawler = MT5DataSource()):
+    def __init__(self, crawler=MT5DataSource()):
         super().__init__(crawler)
 
     def fetch_and_clean(self):
@@ -18,7 +19,7 @@ class MT5Adapter(Adapter):
 
         print("Cleaning MT5 data...")
         cleaned_data = self.crawler.clean_data(raw_data)
-        
+
         return cleaned_data
 
     def transform(self, cleaned_data):
@@ -30,6 +31,6 @@ class MT5Adapter(Adapter):
         transformed_data = {
             "symbol": cleaned_data["symbol"],
             "price": float(cleaned_data["price"]),
-            "timestamp": cleaned_data["timestamp"]
+            "timestamp": cleaned_data["timestamp"],
         }
         return transformed_data
