@@ -194,3 +194,6 @@ class YAHDataSource(DataSource):
             marketcap_value = None
 
         return marketcap_value
+
+    # def save_data_to_postgre(self):
+        
