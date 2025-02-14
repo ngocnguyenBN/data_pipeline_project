@@ -1,16 +1,58 @@
-version: '3'  #choose version as per your need
+version: "3.7"
+
+networks:
+  cassandra-net:
+    driver: bridge
 
 services:
-  cassandra:
-    image: cassandra:latest
-    container_name: cassandra-container
+  cassandra-1:
+    image: "cassandra:latest"
+    container_name: "cassandra-1"
     ports:
       - "9042:9042"
+    networks:
+      - cassandra-net
     environment:
-      - CASSANDRA_USER=admin
-      - CASSANDRA_PASSWORD=admin
+      - CASSANDRA_CLUSTER_NAME=my-cluster
+      - CASSANDRA_SEEDS=cassandra-1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_DC=my-datacenter-1
+      - MAX_HEAP_SIZE=2G
+      - HEAP_NEWSIZE=512M
     volumes:
-      - cassandra-data:/var/lib/cassandra
+      - D:/data_pipeline_project/resources/data/cassandra-node-1:/var/lib/cassandra  # Bind mount    restart: always
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "SELECT release_version FROM system.local"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
-volumes:
-  cassandra-data:
+  cassandra-2:
+    image: "cassandra:latest"
+    container_name: "cassandra-2"
+    ports:
+      - "9043:9042"
+    networks:
+      - cassandra-net
+    environment:
+      - CASSANDRA_CLUSTER_NAME=my-cluster
+      - CASSANDRA_SEEDS=cassandra-1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_DC=my-datacenter-1
+      - MAX_HEAP_SIZE=2G
+      - HEAP_NEWSIZE=512M
+    depends_on:
+      cassandra-1:
+        condition: service_healthy
+    volumes:
+      - D:/data_pipeline_project/resources/data/cassandra-node-2:/var/lib/cassandra  # Bind mount
+    restart: always
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "SELECT release_version FROM system.local"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes: {}  # Xóa volume mặc định nếu không cần thiết
+
+# docker-compose -f docker-compose-cassandra.yml up -d
