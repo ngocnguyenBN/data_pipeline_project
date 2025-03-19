@@ -65,5 +65,5 @@ from app.crawlers.yahoofinance_crawler import YAHDataSource
 # from .yahoofinance_crawler import YAHDataSource
 
 crawler = YAHDataSource("AAPL")
-prices = crawler.get_value_marketcap_by_request()
+prices = crawler.get_data_ohlc()
 print(prices)
